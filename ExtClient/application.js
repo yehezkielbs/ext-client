@@ -4,9 +4,9 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.require('Ext.app.Application');
 Ext.require('ExtClient.util.GridStrings');
 
+Ext.require('Ext.app.Application');
 Ext.onReady(function() {
     ExtClientApp = Ext.create('Ext.app.Application', {
         name: 'ExtClient',
@@ -16,10 +16,21 @@ Ext.onReady(function() {
         apiPrefix: '/api',
 
         controllers: [
-            'Menu',
-            'Base'
+            'Menu'
         ],
 
-        autoCreateViewport: true
+        autoCreateViewport: true,
+
+        getResourcesMetaUrl: function() {
+            return(this.apiPrefix + '/_meta/resources.json');
+        },
+
+        getFieldsMetaUrl: function(uri) {
+            return(this.apiPrefix + '/_meta/resources/' + uri + '/fields.json');
+        },
+
+        getResourcesUrl: function(uri) {
+            return(this.apiPrefix + '/' + uri);
+        }
     });
 });

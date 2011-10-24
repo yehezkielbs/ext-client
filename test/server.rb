@@ -53,7 +53,7 @@ end
 get '/api/:name.json' do
   {
       :success => true,
-      :foos => [
+      params[:name] => [
           {
               :foo_column => 'foo 1',
               :bar_column => 'bar 1',

@@ -5,6 +5,8 @@ Ext.define('ExtClient.controller.Menu', {
     stores: ['Menu'],
     views: ['Menu'],
 
+    requires: ['ExtClient.controller.Base'],
+
     init: function() {
         this.control({
             'menu': {

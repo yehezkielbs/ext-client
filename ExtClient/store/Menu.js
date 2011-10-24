@@ -3,6 +3,6 @@ Ext.define('ExtClient.store.Menu', {
     model: 'ExtClient.model.Menu',
     proxy: {
         type: 'ajax',
-        url: ExtClientApp.apiPrefix + '/_meta/resources.json'
+        url: ExtClientApp.getResourcesMetaUrl()
     }
 });

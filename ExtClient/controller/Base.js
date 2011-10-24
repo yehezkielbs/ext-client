@@ -1,58 +1,44 @@
 Ext.define('ExtClient.controller.Base', {
-    extend: 'Ext.app.Controller',
-
-    abstractClass: true,
 
     requires: ['ExtClient.model.Base', 'ExtClient.store.Base', 'ExtClient.view.GridBase'],
-
-    constructor: function() {
-        var gridStrings, grid;
-
-        if (this.abstractClass === true) {
-            return;
-        }
-
-        gridStrings = this.gridStrings;
-        grid = Ext.getCmp(gridStrings.id);
-
-        if (grid) {
-            grid.show();
-            grid.store.load();
-        }
-        else {
-            Ext.Ajax.request({
-                url: ExtClientApp.apiPrefix + '/_meta/resources/' + gridStrings.uri + '/fields.json',
-                success: function(response) {
-                    var fields = Ext.JSON.decode(response.responseText),
-                        grid = ExtClient.view.GridBase.factory(gridStrings, fields);
-
-                    console.log(grid);
-
-                    Ext.getCmp('content-panel').add(grid);
-                    grid.store.load();
-                    grid.show();
-                }
-            });
-        }
-    },
 
     statics: {
         factory: function(text, uri) {
             var gridStrings = new ExtClient.util.GridStrings(text, uri),
-                controllerName = 'ExtClient.controller.' + gridStrings.name,
-                controller;
+                controllerClassName = 'ExtClient.controller.' + gridStrings.name;
 
-            if (!Ext.ClassManager.isCreated(controllerName)) {
-                Ext.define(controllerName, {
-                    extend: 'ExtClient.controller.Base',
+            if (!Ext.ClassManager.isCreated(controllerClassName)) {
+                Ext.define(controllerClassName, {
+                    extend: 'Ext.app.Controller',
 
-                    abstractClass: false,
-                    gridStrings: gridStrings
+                    gridStrings: gridStrings,
+
+                    constructor: function() {
+                        var gridStrings = this.gridStrings,
+                            grid = Ext.getCmp(gridStrings.id);
+
+                        if (grid) {
+                            grid.show();
+                            grid.store.load();
+                        }
+                        else {
+                            Ext.Ajax.request({
+                                url: ExtClientApp.getFieldsMetaUrl(gridStrings.uri),
+                                success: function(response) {
+                                    var fields = Ext.JSON.decode(response.responseText),
+                                        grid = ExtClient.view.GridBase.factory(gridStrings, fields);
+
+                                    Ext.getCmp('content-panel').add(grid);
+                                    grid.show();
+                                    grid.store.load();
+                                }
+                            });
+                        }
+                    }
                 });
             }
-            controller = ExtClientApp.getController(controllerName);
 
-            return controller;
+            return ExtClientApp.getController(controllerClassName);
         }
     }
 });

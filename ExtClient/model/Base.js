@@ -1,11 +1,10 @@
 Ext.define('ExtClient.model.Base', {
-    extend: 'Ext.data.Model',
-
     statics: {
         factory: function(name, fields) {
-            var modelName = 'ExtClient.model.' + name;
-            Ext.define(modelName, {
-                extend: 'ExtClient.model.Base',
+            var modelClassName = 'ExtClient.model.' + name;
+
+            Ext.define(modelClassName, {
+                extend: 'Ext.data.Model',
 
                 fields: Ext.Array.map(fields, function(item) {
                     return {
@@ -14,7 +13,8 @@ Ext.define('ExtClient.model.Base', {
                     }
                 })
             });
-            return Ext.create(modelName);
+
+            return Ext.create(modelClassName);
         }
     }
 });

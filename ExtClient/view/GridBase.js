@@ -1,27 +1,17 @@
 Ext.define('ExtClient.view.GridBase', {
-    extend: 'Ext.grid.Panel',
-
-    plugins: Ext.create('Ext.grid.plugin.RowEditing'),
-
-    columns: [],
-
-    store: {
-        proxy: {
-            type: 'rest'
-        }
-    },
-
     statics: {
         factory: function(gridStrings, fields) {
             var gridName = gridStrings.name + 'Grid',
                 gridClassName = 'ExtClient.view.' + gridName;
 
             Ext.define(gridClassName, {
-                extend: 'ExtClient.view.GridBase',
+                extend: 'Ext.grid.Panel',
                 alias: 'widget.' + gridName,
 
                 id: gridStrings.id,
                 title: gridStrings.title,
+
+                plugins: Ext.create('Ext.grid.plugin.RowEditing'),
 
                 store: ExtClient.store.Base.factory(gridStrings.name, gridStrings.uri, fields),
 
@@ -33,7 +23,20 @@ Ext.define('ExtClient.view.GridBase', {
                             xtype: 'textfield'
                         }
                     };
-                })
+                }),
+
+                dockedItems: [
+                    {
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: [
+                            {
+                                text: 'Add',
+                                action: 'add'
+                            }
+                        ]
+                    }
+                ]
             });
 
             return Ext.create(gridClassName);
