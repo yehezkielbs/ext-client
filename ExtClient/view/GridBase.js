@@ -1,6 +1,6 @@
 Ext.define('ExtClient.view.GridBase', {
     statics: {
-        factory: function(gridStrings, fields) {
+        factory: function(gridStrings, storeName, fields) {
             var gridName = gridStrings.name + 'Grid',
                 gridClassName = 'ExtClient.view.' + gridName;
 
@@ -13,7 +13,7 @@ Ext.define('ExtClient.view.GridBase', {
 
                 plugins: Ext.create('Ext.grid.plugin.RowEditing'),
 
-                store: ExtClient.store.Base.factory(gridStrings.name, gridStrings.uri, fields),
+                store: Ext.create('ExtClient.store.' + storeName),
 
                 columns: Ext.Array.map(fields, function(item) {
                     return {
@@ -39,7 +39,7 @@ Ext.define('ExtClient.view.GridBase', {
                 ]
             });
 
-            return Ext.create(gridClassName);
+            return gridName;
         }
     }
 });

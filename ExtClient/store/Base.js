@@ -1,8 +1,8 @@
 Ext.define('ExtClient.store.Base', {
     statics: {
-        factory: function(name, uri, fields) {
-            var model = ExtClient.model.Base.factory(name, fields),
-                storeClassName = 'ExtClient.store.' + name;
+        factory: function(gridStrings, modelName) {
+            var storeName = gridStrings.name,
+                storeClassName = 'ExtClient.store.' + storeName;
 
             Ext.define(storeClassName, {
                 extend: 'Ext.data.Store',
@@ -13,12 +13,12 @@ Ext.define('ExtClient.store.Base', {
 
                 proxy: {
                     type: 'rest',
-                    url: ExtClientApp.getResourcesUrl(uri),
+                    url: ExtClientApp.getResourcesUrl(gridStrings.uri),
                     format: 'json',
                     extraParams: { include: 'associations' },
                     reader: {
                         type: 'json',
-                        root: uri,
+                        root: gridStrings.uri,
                         successProperty: 'success',
                         totalProperty: 'total',
                         messageProperty: 'message'
@@ -29,10 +29,10 @@ Ext.define('ExtClient.store.Base', {
                     }
                 },
 
-                model: model.modelName
+                model: 'ExtClient.model.' + modelName
             });
 
-            return Ext.create(storeClassName);
+            return storeName;
         }
     }
 });

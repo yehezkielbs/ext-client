@@ -7,38 +7,44 @@ Ext.define('ExtClient.controller.Base', {
             var gridStrings = new ExtClient.util.GridStrings(text, uri),
                 controllerClassName = 'ExtClient.controller.' + gridStrings.name;
 
-            if (!Ext.ClassManager.isCreated(controllerClassName)) {
-                Ext.define(controllerClassName, {
-                    extend: 'Ext.app.Controller',
+            if (Ext.ClassManager.isCreated(controllerClassName)) {
+                ExtClientApp.getController(gridStrings.name).displayGrid();
+            }
+            else {
+                Ext.Ajax.request({
+                    url: ExtClientApp.getFieldsMetaUrl(gridStrings.uri),
+                    success: function(response) {
+                        var fields = Ext.JSON.decode(response.responseText),
+                            modelName, storeName, gridName, controller;
 
-                    gridStrings: gridStrings,
+                        modelName = ExtClient.model.Base.factory(gridStrings, fields);
+                        storeName = ExtClient.store.Base.factory(gridStrings, modelName);
+                        gridName = ExtClient.view.GridBase.factory(gridStrings, storeName, fields);
 
-                    constructor: function() {
-                        var gridStrings = this.gridStrings,
-                            grid = Ext.getCmp(gridStrings.id);
+                        Ext.define(controllerClassName, {
+                            extend: 'Ext.app.Controller',
 
-                        if (grid) {
-                            grid.show();
-                            grid.store.load();
-                        }
-                        else {
-                            Ext.Ajax.request({
-                                url: ExtClientApp.getFieldsMetaUrl(gridStrings.uri),
-                                success: function(response) {
-                                    var fields = Ext.JSON.decode(response.responseText),
-                                        grid = ExtClient.view.GridBase.factory(gridStrings, fields);
+                            models: [modelName],
+                            stores: [storeName],
+                            views: [gridName],
 
-                                    Ext.getCmp('content-panel').add(grid);
-                                    grid.show();
-                                    grid.store.load();
+                            grid: undefined,
+
+                            displayGrid: function() {
+                                if (this.grid === undefined) {
+                                    this.grid = this.getView(gridName).create();
+                                    Ext.getCmp('content-panel').add(this.grid);
                                 }
-                            });
-                        }
+                                this.grid.show();
+                                this.grid.store.load();
+                            }
+                        });
+
+                        controller = ExtClientApp.getController(gridStrings.name);
+                        controller.displayGrid();
                     }
                 });
             }
-
-            return ExtClientApp.getController(controllerClassName);
         }
     }
 });
