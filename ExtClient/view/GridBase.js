@@ -3,7 +3,8 @@ Ext.define('ExtClient.view.GridBase', {
         factory: function(gridStrings, storeName, fields) {
             var gridName = gridStrings.name + 'Grid',
                 gridClassName = 'ExtClient.view.' + gridName,
-                rowEditor = Ext.create('Ext.grid.plugin.RowEditing');
+                rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
+                store = Ext.create('ExtClient.store.' + storeName);
 
             Ext.define(gridClassName, {
                 extend: 'Ext.grid.Panel',
@@ -16,7 +17,7 @@ Ext.define('ExtClient.view.GridBase', {
 
                 plugins: [rowEditor],
 
-                store: Ext.create('ExtClient.store.' + storeName),
+                store: store,
 
                 columns: Ext.Array.map(fields, function(item) {
                     return {
@@ -51,6 +52,14 @@ Ext.define('ExtClient.view.GridBase', {
                                 action: 'save'
                             }
                         ]
+                    },
+                    {
+                        xtype: 'pagingtoolbar',
+                        dock: 'bottom',
+                        store: store,
+                        displayInfo: true,
+                        displayMsg: 'Displaying {0} - {1} of {2}',
+                        emptyMsg: 'Nothing to display'
                     }
                 ],
 
