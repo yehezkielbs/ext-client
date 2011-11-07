@@ -5,14 +5,18 @@ Ext.define('ExtClient.view.Viewport', {
     renderTo: Ext.getBody(),
     items: [
         {
-            xtype: 'box',
+            xtype: 'panel',
             id: 'header-panel',
+            layout: {
+                type: 'vbox',
+                align: 'center'
+            },
             region: 'north',
-            html: '<h1>Ext-Client</h1>',
-            height: 30
+            title: ExtClientApp.title
         },
         {
-            xtype: 'menu'
+            xtype: 'menu',
+            id: 'menu-panel'
         },
         {
             xtype: 'tabpanel',

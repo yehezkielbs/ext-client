@@ -9,17 +9,18 @@ Ext.require('ExtClient.util.GridStrings');
 Ext.require('Ext.app.Application');
 Ext.onReady(function() {
     ExtClientApp = Ext.create('Ext.app.Application', {
-        name: 'ExtClient',
 
-        appFolder: 'ExtClient',
-
+        title: 'Ext-Client Experiment',
         apiPrefix: '/api',
+
+        name: 'ExtClient',
+        appFolder: 'ExtClient',
+        autoCreateViewport: true,
 
         controllers: [
             'Menu'
         ],
 
-        autoCreateViewport: true,
 
         getResourcesMetaUrl: function() {
             return(this.apiPrefix + '/_meta/resources.json');

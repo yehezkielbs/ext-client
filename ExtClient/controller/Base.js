@@ -15,7 +15,8 @@ Ext.define('ExtClient.controller.Base', {
                     url: ExtClientApp.getFieldsMetaUrl(gridStrings.uri),
                     success: function(response) {
                         var fields = Ext.JSON.decode(response.responseText),
-                            modelName, storeName, gridName, controller;
+                            modelName, storeName, gridName, controller,
+                            controls;
 
                         modelName = ExtClient.model.Base.factory(gridStrings, fields);
                         storeName = ExtClient.store.Base.factory(gridStrings, modelName);
@@ -37,10 +38,34 @@ Ext.define('ExtClient.controller.Base', {
                                 }
                                 this.grid.show();
                                 this.grid.store.load();
+                            },
+
+                            add: function() {
+                                this.grid.insert(this.getModel(modelName).create());
+                            },
+
+                            edit: function() {
+                                this.grid.edit();
+                            },
+
+                            delete: function() {
+                                this.grid.delete();
+                            },
+
+                            save: function() {
+                                this.grid.store.sync();
                             }
                         });
 
                         controller = ExtClientApp.getController(gridStrings.name);
+
+                        controls = {};
+                        controls[gridName + ' button[action=add]'] = {click: controller.add};
+                        controls[gridName + ' button[action=edit]'] = {click: controller.edit};
+                        controls[gridName + ' button[action=delete]'] = {click: controller.delete};
+                        controls[gridName + ' button[action=save]'] = {click: controller.save};
+                        controller.control(controls);
+
                         controller.displayGrid();
                     }
                 });
