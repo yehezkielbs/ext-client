@@ -1,3 +1,5 @@
+/*global Ext*/
+
 Ext.define('ExtClient.model.Menu', {
     extend: 'Ext.data.Model',
     fields: [

@@ -16,6 +16,9 @@ ActiveRecord::Schema.define(:version => 20111107220629) do
     t.string   "name"
     t.text     "description"
     t.boolean  "active"
+    t.date     "join_date"
+    t.decimal  "debt",        :precision => 2, :scale => 11
+    t.float    "rating"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

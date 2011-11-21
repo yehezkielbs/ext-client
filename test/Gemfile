@@ -1,0 +1,8 @@
+source :rubygems
+
+group :test do
+  gem 'rails', '3.0.9'
+  gem 'sqlite3'
+  gem 'rest_engine'
+  gem 'jshint'
+end

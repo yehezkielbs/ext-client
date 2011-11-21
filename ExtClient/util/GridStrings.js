@@ -1,3 +1,5 @@
+/*global Ext*/
+
 Ext.define('ExtClient.util.GridStrings', {
     title: '',
     name: '',

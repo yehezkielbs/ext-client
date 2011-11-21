@@ -1,3 +1,5 @@
+/*global Ext*/
+
 var ExtClientApp = ExtClientApp || {}
 
 Ext.Loader.setConfig({
@@ -5,8 +7,9 @@ Ext.Loader.setConfig({
 });
 
 Ext.require('ExtClient.util.GridStrings');
-
+Ext.require('ExtClient.util.FieldTypeMap');
 Ext.require('Ext.app.Application');
+
 Ext.onReady(function() {
     ExtClientApp = Ext.create('Ext.app.Application', {
 

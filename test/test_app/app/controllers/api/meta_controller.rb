@@ -25,7 +25,9 @@ module Api
         {
             :title => field.name.humanize,
             :name => field.name,
-            :type => field.type
+            :type => field.type,
+            :scale => field.scale,
+            :precision => field.precision
         }
       end
       render(:json => result)

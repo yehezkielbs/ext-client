@@ -1,3 +1,5 @@
+/*global Ext, ExtClientApp*/
+
 Ext.define('ExtClient.view.Viewport', {
     extend: 'Ext.container.Viewport',
 

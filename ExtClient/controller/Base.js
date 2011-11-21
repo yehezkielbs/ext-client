@@ -1,3 +1,5 @@
+/*global Ext, ExtClient, ExtClientApp*/
+
 Ext.define('ExtClient.controller.Base', {
 
     requires: ['ExtClient.model.Base', 'ExtClient.store.Base', 'ExtClient.view.GridBase'],
@@ -48,8 +50,8 @@ Ext.define('ExtClient.controller.Base', {
                                 this.grid.edit();
                             },
 
-                            delete: function() {
-                                this.grid.delete();
+                            remove: function() {
+                                this.grid.remove();
                             },
 
                             save: function() {
@@ -62,7 +64,7 @@ Ext.define('ExtClient.controller.Base', {
                         controls = {};
                         controls[gridName + ' button[action=add]'] = {click: controller.add};
                         controls[gridName + ' button[action=edit]'] = {click: controller.edit};
-                        controls[gridName + ' button[action=delete]'] = {click: controller.delete};
+                        controls[gridName + ' button[action=delete]'] = {click: controller.remove};
                         controls[gridName + ' button[action=save]'] = {click: controller.save};
                         controller.control(controls);
 

@@ -1,3 +1,5 @@
+/*global Ext, ExtClient*/
+
 Ext.define('ExtClient.view.GridBase', {
     statics: {
         factory: function(gridStrings, storeName, fields) {
@@ -20,13 +22,14 @@ Ext.define('ExtClient.view.GridBase', {
                 store: store,
 
                 columns: Ext.Array.map(fields, function(item) {
-                    return {
-                        text: item.title,
-                        dataIndex: item.name,
-                        field: {
-                            xtype: 'textfield'
-                        }
-                    };
+                    return Ext.Object.merge(
+                        {
+                            text: item.title,
+                            dataIndex: item.name,
+                            field: ExtClient.util.FieldTypeMap.getFormField(item)
+                        },
+                        ExtClient.util.FieldTypeMap.getGridColumn(item)
+                    );
                 }),
 
                 dockedItems: [
@@ -79,7 +82,7 @@ Ext.define('ExtClient.view.GridBase', {
                     }
                 },
 
-                delete: function() {
+                remove: function() {
                     var selected = this.getSelected();
                     if (selected) {
                         this.store.remove(selected);

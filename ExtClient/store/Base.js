@@ -1,3 +1,5 @@
+/*global Ext, ExtClientApp*/
+
 Ext.define('ExtClient.store.Base', {
     statics: {
         factory: function(gridStrings, modelName) {

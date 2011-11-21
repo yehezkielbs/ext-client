@@ -33,6 +33,7 @@ GEM
     erubis (2.6.6)
       abstract (>= 1.0.0)
     i18n (0.5.0)
+    jshint (0.1.1)
     json (1.6.1)
     mail (2.2.19)
       activesupport (>= 2.3.6)
@@ -75,6 +76,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  jshint
   rails (= 3.0.9)
   rest_engine
   sqlite3

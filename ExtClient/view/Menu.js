@@ -1,3 +1,5 @@
+/*global Ext*/
+
 Ext.define('ExtClient.view.Menu', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.menu',

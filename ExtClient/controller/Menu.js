@@ -1,3 +1,5 @@
+/*global Ext, ExtClient*/
+
 Ext.define('ExtClient.controller.Menu', {
     extend: 'Ext.app.Controller',
 
