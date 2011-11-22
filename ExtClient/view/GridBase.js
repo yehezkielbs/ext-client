@@ -78,7 +78,7 @@ Ext.define('ExtClient.view.GridBase', {
                 edit: function() {
                     var selected = this.getSelected();
                     if (selected) {
-                        this.rowEditor.startEdit(selected.index, 1);
+                        this.rowEditor.startEdit(selected, 1);
                     }
                 },
 
