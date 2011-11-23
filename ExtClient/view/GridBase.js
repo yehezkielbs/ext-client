@@ -2,8 +2,8 @@
 
 Ext.define('ExtClient.view.GridBase', {
     statics: {
-        factory: function(gridStrings, storeName, fields) {
-            var gridName = gridStrings.name + 'Grid',
+        factory: function(resourceStrings, storeName, fields) {
+            var gridName = resourceStrings.name + 'Grid',
                 gridClassName = 'ExtClient.view.' + gridName,
                 rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
                 store = Ext.create('ExtClient.store.' + storeName);
@@ -12,8 +12,8 @@ Ext.define('ExtClient.view.GridBase', {
                 extend: 'Ext.grid.Panel',
                 alias: 'widget.' + gridName,
 
-                id: gridStrings.id,
-                title: gridStrings.text,
+                id: resourceStrings.id,
+                title: resourceStrings.text,
 
                 rowEditor: rowEditor,
 

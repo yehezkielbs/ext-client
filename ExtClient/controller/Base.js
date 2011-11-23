@@ -6,23 +6,23 @@ Ext.define('ExtClient.controller.Base', {
 
     statics: {
         factory: function(text, model, uri) {
-            var gridStrings = new ExtClient.util.GridStrings(text, model, uri),
-                controllerClassName = 'ExtClient.controller.' + gridStrings.name;
+            var resourceStrings = new ExtClient.util.ResourceStrings(text, model, uri),
+                controllerClassName = 'ExtClient.controller.' + resourceStrings.name;
 
             if (Ext.ClassManager.isCreated(controllerClassName)) {
-                ExtClientApp.getController(gridStrings.name).displayGrid();
+                ExtClientApp.getController(resourceStrings.name).displayGrid();
             }
             else {
                 Ext.Ajax.request({
-                    url: ExtClientApp.getResourceReflectionMetaUrl(gridStrings.uri),
+                    url: ExtClientApp.getResourceReflectionMetaUrl(resourceStrings.uri),
                     success: function(response) {
                         var reflection = Ext.JSON.decode(response.responseText),
                             fields = reflection.fields,
                             modelName, storeName, gridName, controller;
 
-                        modelName = ExtClient.model.Base.factory(gridStrings, reflection);
-                        storeName = ExtClient.store.Base.factory(gridStrings, modelName);
-                        gridName = ExtClient.view.GridBase.factory(gridStrings, storeName, fields);
+                        modelName = ExtClient.model.Base.factory(resourceStrings, reflection);
+                        storeName = ExtClient.store.Base.factory(resourceStrings, modelName);
+                        gridName = ExtClient.view.GridBase.factory(resourceStrings, storeName, fields);
 
                         Ext.define(controllerClassName, {
                             extend: 'Ext.app.Controller',
@@ -71,7 +71,7 @@ Ext.define('ExtClient.controller.Base', {
                             }
                         });
 
-                        controller = ExtClientApp.getController(gridStrings.name);
+                        controller = ExtClientApp.getController(resourceStrings.name);
                         controller.displayGrid();
                     }
                 });

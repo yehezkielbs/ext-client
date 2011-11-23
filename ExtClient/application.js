@@ -6,7 +6,7 @@ Ext.Loader.setConfig({
     enabled: true
 });
 
-Ext.require('ExtClient.util.GridStrings');
+Ext.require('ExtClient.util.ResourceStrings');
 Ext.require('ExtClient.util.FieldTypeMap');
 Ext.require('Ext.app.Application');
 

@@ -2,8 +2,8 @@
 
 Ext.define('ExtClient.model.Base', {
     statics: {
-        factory: function(gridStrings, reflection) {
-            var modelName = gridStrings.name,
+        factory: function(resourceStrings, reflection) {
+            var modelName = resourceStrings.name,
                 modelClassName = 'ExtClient.model.' + modelName;
 
             Ext.define(modelClassName, {

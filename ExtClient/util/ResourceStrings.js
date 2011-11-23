@@ -1,6 +1,6 @@
 /*global Ext*/
 
-Ext.define('ExtClient.util.GridStrings', {
+Ext.define('ExtClient.util.ResourceStrings', {
     text: '',
     model: '',
     name: '',
