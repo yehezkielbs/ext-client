@@ -5,8 +5,8 @@ Ext.define('ExtClient.controller.Base', {
     requires: ['ExtClient.model.Base', 'ExtClient.store.Base', 'ExtClient.view.GridBase'],
 
     statics: {
-        factory: function(text, uri) {
-            var gridStrings = new ExtClient.util.GridStrings(text, uri),
+        factory: function(text, model, uri) {
+            var gridStrings = new ExtClient.util.GridStrings(text, model, uri),
                 controllerClassName = 'ExtClient.controller.' + gridStrings.name;
 
             if (Ext.ClassManager.isCreated(controllerClassName)) {
@@ -14,12 +14,13 @@ Ext.define('ExtClient.controller.Base', {
             }
             else {
                 Ext.Ajax.request({
-                    url: ExtClientApp.getFieldsMetaUrl(gridStrings.uri),
+                    url: ExtClientApp.getResourceReflectionMetaUrl(gridStrings.uri),
                     success: function(response) {
-                        var fields = Ext.JSON.decode(response.responseText),
+                        var reflection = Ext.JSON.decode(response.responseText),
+                            fields = reflection.fields,
                             modelName, storeName, gridName, controller;
 
-                        modelName = ExtClient.model.Base.factory(gridStrings, fields);
+                        modelName = ExtClient.model.Base.factory(gridStrings, reflection);
                         storeName = ExtClient.store.Base.factory(gridStrings, modelName);
                         gridName = ExtClient.view.GridBase.factory(gridStrings, storeName, fields);
 

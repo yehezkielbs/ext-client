@@ -9,7 +9,8 @@ module Api
 
       result = class_names.map do |class_name|
         {
-            :text => class_name.humanize,
+            :text => class_name.tableize.titleize,
+            :model => class_name,
             :leaf => true,
             :uri => class_name.tableize
         }
@@ -18,18 +19,34 @@ module Api
       render(:json => result)
     end
 
-    def fields
-      class_name = params[:name].classify
-      fields = class_name.constantize.columns
-      result = fields.map do |field|
-        {
-            :title => field.name.humanize,
-            :name => field.name,
-            :type => field.type,
-            :scale => field.scale,
-            :precision => field.precision
-        }
-      end
+    def reflection
+      model_class_name = params[:name].classify
+      model_class = model_class_name.constantize
+      result = {
+          :fields => model_class.columns.map do |field|
+            {
+                :text => field.name.titleize,
+                :name => field.name,
+                :type => field.type,
+                :scale => field.scale,
+                :precision => field.precision
+            }
+          end,
+          :belongs_to => model_class.reflect_on_all_associations(:belongs_to).map do |association|
+            {
+                :model => association.class_name,
+                :name => association.name,
+                :foreign_key => association.association_foreign_key
+            }
+          end,
+          :has_many => model_class.reflect_on_all_associations(:has_many).map do |association|
+            {
+                :model => association.class_name,
+                :name => association.name,
+                :foreign_key => model_class_name.foreign_key
+            }
+          end
+      }
       render(:json => result)
     end
   end

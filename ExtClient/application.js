@@ -29,8 +29,8 @@ Ext.onReady(function() {
             return(this.apiPrefix + '/_meta/resources.json');
         },
 
-        getFieldsMetaUrl: function(uri) {
-            return(this.apiPrefix + '/_meta/resources/' + uri + '/fields.json');
+        getResourceReflectionMetaUrl: function(uri) {
+            return(this.apiPrefix + '/_meta/resources/' + uri + '/reflection.json');
         },
 
         getResourcesUrl: function(uri) {

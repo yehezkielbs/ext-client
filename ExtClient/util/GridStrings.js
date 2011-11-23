@@ -1,14 +1,16 @@
 /*global Ext*/
 
 Ext.define('ExtClient.util.GridStrings', {
-    title: '',
+    text: '',
+    model: '',
     name: '',
     id: '',
     uri: '',
 
-    constructor: function(title, uri) {
-        this.title = title;
-        this.name = title.replace(/\s+/, '');
+    constructor: function(text, model, uri) {
+        this.text = text;
+        this.model = model;
+        this.name = model;
         this.id = this.name + '-grid';
         this.uri = uri;
     }

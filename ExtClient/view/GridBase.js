@@ -13,7 +13,7 @@ Ext.define('ExtClient.view.GridBase', {
                 alias: 'widget.' + gridName,
 
                 id: gridStrings.id,
-                title: gridStrings.title,
+                title: gridStrings.text,
 
                 rowEditor: rowEditor,
 
@@ -24,7 +24,7 @@ Ext.define('ExtClient.view.GridBase', {
                 columns: Ext.Array.map(fields, function(item) {
                     return Ext.Object.merge(
                         {
-                            text: item.title,
+                            text: item.text,
                             dataIndex: item.name,
                             field: ExtClient.util.FieldTypeMap.getFormField(item)
                         },

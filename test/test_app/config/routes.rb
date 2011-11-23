@@ -1,7 +1,7 @@
 TestApp::Application.routes.draw do
   namespace :api do
     match '_meta/resources' => 'meta#resources'
-    match '_meta/resources/:name/fields' => 'meta#fields'
+    match '_meta/resources/:name/reflection' => 'meta#reflection'
   end
   # The priority is based upon order of creation:
   # first created -> highest priority.
