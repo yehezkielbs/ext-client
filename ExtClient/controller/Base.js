@@ -6,88 +6,86 @@ Ext.define('ExtClient.controller.Base', {
 
     statics: {
         factory: function(resourceStrings, callback) {
-            var controllerClassName = 'ExtClient.controller.' + resourceStrings.name;
-
-            if (Ext.ClassManager.isCreated(controllerClassName)) {
-                callback(ExtClientApp.getController(resourceStrings.name));
+            if (Ext.ClassManager.isCreated(resourceStrings.controllerClassName)) {
+                callback(ExtClientApp.getController(resourceStrings.controllerName));
+                return;
             }
-            else {
-                Ext.Ajax.request({
-                    url: ExtClientApp.getResourceReflectionMetaUrl(resourceStrings.uri),
-                    success: function(response) {
-                        var reflection = Ext.JSON.decode(response.responseText),
-                            fields = reflection.fields,
-                            modelName, storeName, gridName;
 
-                        modelName = ExtClient.model.Base.factory(resourceStrings, reflection);
-                        storeName = ExtClient.store.Base.factory(resourceStrings, modelName);
-                        gridName = ExtClient.view.GridBase.factory(resourceStrings, storeName, fields);
+            Ext.Ajax.request({
+                url: ExtClientApp.getResourceReflectionMetaUrl(resourceStrings.uri),
+                success: function(response) {
+                    var reflection = Ext.JSON.decode(response.responseText),
+                        fields = reflection.fields;
 
-                        Ext.define(controllerClassName, {
-                            extend: 'Ext.app.Controller',
+                    ExtClient.model.Base.factory(resourceStrings, reflection);
+                    ExtClient.store.Base.factory(resourceStrings);
+                    ExtClient.view.GridBase.factory(resourceStrings, fields);
 
-                            models: [modelName],
-                            stores: [storeName],
-                            views: [gridName],
+                    Ext.define(resourceStrings.controllerClassName, {
+                        extend: 'Ext.app.Controller',
 
-                            grid: undefined,
+                        models: [resourceStrings.modelName],
+                        stores: [resourceStrings.storeName],
+                        views: [resourceStrings.gridName],
 
-                            displayGrid: function() {
-                                if (this.grid === undefined) {
-                                    this.grid = this.getView(gridName).create();
-                                    Ext.getCmp('content-panel').add(this.grid);
-                                }
-                                this.grid.show();
-                                this.grid.store.load();
-                            },
+                        grid: undefined,
 
-                            add: function() {
-                                this.grid.insert(this.getModel(modelName).create());
-                            },
+                        displayGrid: function() {
+                            if (this.grid === undefined) {
+                                this.grid = this.getView(resourceStrings.gridName).create();
+                                Ext.getCmp('content-panel').add(this.grid);
+                            }
+                            this.grid.show();
+                            this.grid.store.load();
+                        },
 
-                            edit: function() {
-                                this.grid.edit();
-                            },
+                        add: function() {
+                            this.grid.insert(this.getModel(resourceStrings.modelName).create());
+                        },
 
-                            remove: function() {
-                                this.grid.remove();
-                            },
+                        edit: function() {
+                            this.grid.edit();
+                        },
 
-                            save: function() {
-                                this.grid.store.sync();
-                            },
+                        remove: function() {
+                            this.grid.remove();
+                        },
 
-                            constructor: function() {
-                                var controls = {};
+                        save: function() {
+                            this.grid.store.sync();
+                        },
 
-                                this.callParent(arguments);
+                        constructor: function() {
+                            var controls = {};
 
-                                controls[gridName + ' button[action=add]'] = {click: this.add};
-                                controls[gridName + ' button[action=edit]'] = {click: this.edit};
-                                controls[gridName + ' button[action=delete]'] = {click: this.remove};
-                                controls[gridName + ' button[action=save]'] = {click: this.save};
-                                this.control(controls);
+                            this.callParent(arguments);
+
+                            controls[resourceStrings.gridName + ' button[action=add]'] = {click: this.add};
+                            controls[resourceStrings.gridName + ' button[action=edit]'] = {click: this.edit};
+                            controls[resourceStrings.gridName + ' button[action=delete]'] = {click: this.remove};
+                            controls[resourceStrings.gridName + ' button[action=save]'] = {click: this.save};
+                            this.control(controls);
+                        }
+                    });
+
+                    Ext.Array.each(reflection.belongs_to || [], function(belongsToItem) {
+                        var menu = ExtClientApp.getStore('Menu').getRootNode(),
+                            menuNode, reflectionResourceString;
+
+                        menu.eachChild(function(nodeItem) {
+                            if (belongsToItem.model === nodeItem.get('model')) {
+                                menuNode = nodeItem;
                             }
                         });
 
-                        Ext.Array.each(reflection.belongs_to || [], function(belongsToItem) {
-                            var menu = ExtClientApp.getStore('Menu').getRootNode(),
-                                menuNode, reflectionResourceString;
-
-                            menu.eachChild(function(nodeItem) {
-                                if (belongsToItem.model === nodeItem.get('model')) {
-                                    menuNode = nodeItem;
-                                }
-                            });
-
-                            reflectionResourceString = new ExtClient.util.ResourceStrings(menuNode.get('text'), menuNode.get('model'), menuNode.get('uri'));
-                            ExtClient.controller.Base.factory(reflectionResourceString, function() {});
+                        reflectionResourceString = new ExtClient.util.ResourceStrings(menuNode.get('text'), menuNode.get('model'), menuNode.get('uri'));
+                        ExtClient.controller.Base.factory(reflectionResourceString, function() {
                         });
+                    });
 
-                        callback(ExtClientApp.getController(resourceStrings.name));
-                    }
-                });
-            }
+                    callback(ExtClientApp.getController(resourceStrings.controllerName));
+                }
+            });
         }
     }
 });
