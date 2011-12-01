@@ -8,91 +8,93 @@ Ext.define('ExtClient.view.GridBase', {
                 rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
                 store = Ext.create('ExtClient.store.' + storeName);
 
-            Ext.define(gridClassName, {
-                extend: 'Ext.grid.Panel',
-                alias: 'widget.' + gridName,
+            if (!Ext.ClassManager.isCreated(gridClassName)) {
+                Ext.define(gridClassName, {
+                    extend: 'Ext.grid.Panel',
+                    alias: 'widget.' + gridName,
 
-                id: resourceStrings.id,
-                title: resourceStrings.text,
+                    id: resourceStrings.id,
+                    title: resourceStrings.text,
 
-                rowEditor: rowEditor,
+                    rowEditor: rowEditor,
 
-                plugins: [rowEditor],
+                    plugins: [rowEditor],
 
-                store: store,
+                    store: store,
 
-                columns: Ext.Array.map(fields, function(item) {
-                    return Ext.Object.merge(
+                    columns: Ext.Array.map(fields, function(item) {
+                        return Ext.Object.merge(
+                            {
+                                text: item.text,
+                                dataIndex: item.name,
+                                field: ExtClient.util.FieldTypeMap.getFormField(item)
+                            },
+                            ExtClient.util.FieldTypeMap.getGridColumn(item)
+                        );
+                    }),
+
+                    dockedItems: [
                         {
-                            text: item.text,
-                            dataIndex: item.name,
-                            field: ExtClient.util.FieldTypeMap.getFormField(item)
+                            xtype: 'toolbar',
+                            dock: 'top',
+                            items: [
+                                {
+                                    text: 'Add',
+                                    action: 'add'
+                                },
+                                {
+                                    text: 'Edit',
+                                    action: 'edit'
+                                },
+                                {
+                                    text: 'Delete',
+                                    action: 'delete'
+                                },
+                                '-',
+                                {
+                                    text: 'Save',
+                                    action: 'save'
+                                }
+                            ]
                         },
-                        ExtClient.util.FieldTypeMap.getGridColumn(item)
-                    );
-                }),
+                        {
+                            xtype: 'pagingtoolbar',
+                            dock: 'bottom',
+                            store: store,
+                            displayInfo: true,
+                            displayMsg: 'Displaying {0} - {1} of {2}',
+                            emptyMsg: 'Nothing to display'
+                        }
+                    ],
 
-                dockedItems: [
-                    {
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: [
-                            {
-                                text: 'Add',
-                                action: 'add'
-                            },
-                            {
-                                text: 'Edit',
-                                action: 'edit'
-                            },
-                            {
-                                text: 'Delete',
-                                action: 'delete'
-                            },
-                            '-',
-                            {
-                                text: 'Save',
-                                action: 'save'
-                            }
-                        ]
+                    getSelected: function() {
+                        return this.getSelectionModel().getSelection()[0]
                     },
-                    {
-                        xtype: 'pagingtoolbar',
-                        dock: 'bottom',
-                        store: store,
-                        displayInfo: true,
-                        displayMsg: 'Displaying {0} - {1} of {2}',
-                        emptyMsg: 'Nothing to display'
+
+                    insert: function(object) {
+                        this.store.insert(0, object);
+                        this.rowEditor.startEdit(0, 1);
+                    },
+
+                    edit: function() {
+                        var selected = this.getSelected();
+                        if (selected) {
+                            this.rowEditor.startEdit(selected, 1);
+                        }
+                    },
+
+                    remove: function() {
+                        var selected = this.getSelected();
+                        if (selected) {
+                            this.store.remove(selected);
+                        }
+                    },
+
+                    save: function() {
+                        this.store.sync();
                     }
-                ],
-
-                getSelected: function() {
-                    return this.getSelectionModel().getSelection()[0]
-                },
-
-                insert: function(object) {
-                    this.store.insert(0, object);
-                    this.rowEditor.startEdit(0, 1);
-                },
-
-                edit: function() {
-                    var selected = this.getSelected();
-                    if (selected) {
-                        this.rowEditor.startEdit(selected, 1);
-                    }
-                },
-
-                remove: function() {
-                    var selected = this.getSelected();
-                    if (selected) {
-                        this.store.remove(selected);
-                    }
-                },
-
-                save: function() {
-                    this.store.sync();
-                }
-            });
+                });
+            }
 
             return gridName;
         }

@@ -16,8 +16,13 @@ Ext.define('ExtClient.controller.Menu', {
     },
 
     itemClicked: function(selModel, record) {
+        var resourceStrings;
+
         if (record.get('leaf')) {
-            ExtClient.controller.Base.factory(record.get('text'), record.get('model'), record.get('uri'));
+            resourceStrings = new ExtClient.util.ResourceStrings(record.get('text'), record.get('model'), record.get('uri'));
+            ExtClient.controller.Base.factory(resourceStrings, function(controller) {
+                controller.displayGrid();
+            });
         }
     }
 });

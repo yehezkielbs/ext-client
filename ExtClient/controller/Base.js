@@ -5,12 +5,11 @@ Ext.define('ExtClient.controller.Base', {
     requires: ['ExtClient.model.Base', 'ExtClient.store.Base', 'ExtClient.view.GridBase'],
 
     statics: {
-        factory: function(text, model, uri) {
-            var resourceStrings = new ExtClient.util.ResourceStrings(text, model, uri),
-                controllerClassName = 'ExtClient.controller.' + resourceStrings.name;
+        factory: function(resourceStrings, callback) {
+            var controllerClassName = 'ExtClient.controller.' + resourceStrings.name;
 
             if (Ext.ClassManager.isCreated(controllerClassName)) {
-                ExtClientApp.getController(resourceStrings.name).displayGrid();
+                callback(ExtClientApp.getController(resourceStrings.name));
             }
             else {
                 Ext.Ajax.request({
@@ -18,7 +17,7 @@ Ext.define('ExtClient.controller.Base', {
                     success: function(response) {
                         var reflection = Ext.JSON.decode(response.responseText),
                             fields = reflection.fields,
-                            modelName, storeName, gridName, controller;
+                            modelName, storeName, gridName;
 
                         modelName = ExtClient.model.Base.factory(resourceStrings, reflection);
                         storeName = ExtClient.store.Base.factory(resourceStrings, modelName);
@@ -71,8 +70,21 @@ Ext.define('ExtClient.controller.Base', {
                             }
                         });
 
-                        controller = ExtClientApp.getController(resourceStrings.name);
-                        controller.displayGrid();
+                        Ext.Array.each(reflection.belongs_to || [], function(belongsToItem) {
+                            var menu = ExtClientApp.getStore('Menu').getRootNode(),
+                                menuNode, reflectionResourceString;
+
+                            menu.eachChild(function(nodeItem) {
+                                if (belongsToItem.model === nodeItem.get('model')) {
+                                    menuNode = nodeItem;
+                                }
+                            });
+
+                            reflectionResourceString = new ExtClient.util.ResourceStrings(menuNode.get('text'), menuNode.get('model'), menuNode.get('uri'));
+                            ExtClient.controller.Base.factory(reflectionResourceString, function() {});
+                        });
+
+                        callback(ExtClientApp.getController(resourceStrings.name));
                     }
                 });
             }
