@@ -3,8 +3,13 @@
 var ExtClientApp = ExtClientApp || {}
 
 Ext.Loader.setConfig({
-    enabled: true
+    enabled: true,
+    paths: {
+        'Ext.ux': '/vendor/ux'
+    }
 });
+
+Ext.require('Ext.ux.form.field.DateTime');
 
 Ext.require('ExtClient.util.ResourceStrings');
 Ext.require('ExtClient.util.FieldTypeMap');

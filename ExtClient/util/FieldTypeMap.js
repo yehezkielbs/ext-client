@@ -18,10 +18,7 @@ Ext.define('ExtClient.util.FieldTypeMap', {
                 case 'boolean':
                     return Ext.data.Types.BOOL;
                 case 'date':
-                    return Ext.data.Types.DATE;
                 case 'time':
-                    return Ext.data.Types.DATE;
-                // TODO: datetime
                 case 'datetime':
                 case 'timestamp':
                     return Ext.data.Types.DATE;
@@ -56,7 +53,7 @@ Ext.define('ExtClient.util.FieldTypeMap', {
                 case 'datetime':
                 case 'timestamp':
                     return {
-                        xtype: 'datefield'
+                        xtype: 'datetimefield'
                     };
                 case 'time':
                     return {
@@ -104,7 +101,8 @@ Ext.define('ExtClient.util.FieldTypeMap', {
                 case 'timestamp':
                     return {
                         xtype: 'datecolumn',
-                        format: 'Y-m-d H:i:sO'
+                        format: 'Y-m-d H:i O',
+                        width: 180
                     };
                 default:
                     return {
