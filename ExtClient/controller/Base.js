@@ -7,19 +7,20 @@ Ext.define('ExtClient.controller.Base', {
     statics: {
         factory: function(resourceStrings, callback) {
             if (Ext.ClassManager.isCreated(resourceStrings.controllerClassName)) {
-                callback(ExtClientApp.getController(resourceStrings.controllerName));
+                if (callback) {
+                    callback(ExtClientApp.getController(resourceStrings.controllerName));
+                }
                 return;
             }
 
             Ext.Ajax.request({
                 url: ExtClientApp.getResourceReflectionMetaUrl(resourceStrings.uri),
                 success: function(response) {
-                    var reflection = Ext.JSON.decode(response.responseText),
-                        fields = reflection.fields;
+                    var reflection = Ext.JSON.decode(response.responseText);
 
                     ExtClient.model.Base.factory(resourceStrings, reflection);
                     ExtClient.store.Base.factory(resourceStrings);
-                    ExtClient.view.GridBase.factory(resourceStrings, fields);
+                    ExtClient.view.GridBase.factory(resourceStrings, reflection);
 
                     Ext.define(resourceStrings.controllerClassName, {
                         extend: 'Ext.app.Controller',
@@ -39,8 +40,8 @@ Ext.define('ExtClient.controller.Base', {
                             this.grid.store.load();
                         },
 
-                        add: function() {
-                            this.grid.insert(this.getModel(resourceStrings.modelName).create());
+                        insert: function() {
+                            this.grid.insert();
                         },
 
                         edit: function() {
@@ -52,7 +53,7 @@ Ext.define('ExtClient.controller.Base', {
                         },
 
                         save: function() {
-                            this.grid.store.sync();
+                            this.grid.save();
                         },
 
                         constructor: function() {
@@ -60,7 +61,7 @@ Ext.define('ExtClient.controller.Base', {
 
                             this.callParent(arguments);
 
-                            controls[resourceStrings.gridName + ' button[action=add]'] = {click: this.add};
+                            controls[resourceStrings.gridName + ' button[action=add]'] = {click: this.insert};
                             controls[resourceStrings.gridName + ' button[action=edit]'] = {click: this.edit};
                             controls[resourceStrings.gridName + ' button[action=delete]'] = {click: this.remove};
                             controls[resourceStrings.gridName + ' button[action=save]'] = {click: this.save};
@@ -79,11 +80,12 @@ Ext.define('ExtClient.controller.Base', {
                         });
 
                         reflectionResourceString = new ExtClient.util.ResourceStrings(menuNode.get('text'), menuNode.get('model'), menuNode.get('uri'));
-                        ExtClient.controller.Base.factory(reflectionResourceString, function() {
-                        });
+                        ExtClient.controller.Base.factory(reflectionResourceString);
                     });
 
-                    callback(ExtClientApp.getController(resourceStrings.controllerName));
+                    if (callback) {
+                        callback(ExtClientApp.getController(resourceStrings.controllerName));
+                    }
                 }
             });
         }

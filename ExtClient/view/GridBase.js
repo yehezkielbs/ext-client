@@ -2,8 +2,9 @@
 
 Ext.define('ExtClient.view.GridBase', {
     statics: {
-        factory: function(resourceStrings, fields) {
-            var rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
+        factory: function(resourceStrings, reflection) {
+            var fields = reflection.fields,
+                rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
                 store = Ext.create(resourceStrings.storeClassName);
 
             if (Ext.ClassManager.isCreated(resourceStrings.gridClassName)) {
@@ -72,8 +73,8 @@ Ext.define('ExtClient.view.GridBase', {
                     return this.getSelectionModel().getSelection()[0]
                 },
 
-                insert: function(object) {
-                    this.store.insert(0, object);
+                insert: function() {
+                    this.store.insert(0, Ext.ModelManager.getModel(resourceStrings.modelClassName).create());
                     this.rowEditor.startEdit(0, 1);
                 },
 
