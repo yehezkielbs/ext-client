@@ -1,4 +1,4 @@
-/*global Ext, ExtClient*/
+/*global Ext, ExtClient, ExtClientApp*/
 
 Ext.define('ExtClient.view.GridBase', {
     statics: {
@@ -25,14 +25,51 @@ Ext.define('ExtClient.view.GridBase', {
                 store: store,
 
                 columns: Ext.Array.map(fields, function(item) {
-                    return Ext.Object.merge(
-                        {
+                    var belongsToRefArray = Ext.Array.filter(reflection.belongs_to || [], function(belongsToItem) {
+                            return (belongsToItem.foreign_key === item.name);
+                        }),
+                        belongsToRef, belongsToResourceStrings;
+
+                    if (belongsToRefArray.length > 0) {
+                        belongsToRef = belongsToRefArray[0];
+                        belongsToResourceStrings = ExtClientApp.resourceStringsCollection.get(belongsToRef.model);
+
+                        rowEditor.addListener({
+                            beforeedit: function() {
+                                var comboBox = Ext.getCmp(belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId);
+
+                                if (comboBox.store.storeId === "ext-empty-store") {
+                                    comboBox.store = Ext.create(belongsToResourceStrings.storeClassName);
+                                }
+                            }
+                        });
+
+                        return {
                             text: item.text,
                             dataIndex: item.name,
-                            field: ExtClient.util.FieldTypeMap.getFormField(item)
-                        },
-                        ExtClient.util.FieldTypeMap.getGridColumn(item)
-                    );
+                            editor: {
+                                xtype: 'combobox',
+                                store: null,
+                                valueField: 'id',
+                                displayField: 'name',
+                                forceSelection: true,
+                                queryMode: 'remote',
+                                id: belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId
+                            },
+                            xtype: 'templatecolumn',
+                            tpl: '<tpl if="' + belongsToRef.name + '">{' + belongsToRef.name + '.name}</tpl>'
+                        };
+                    }
+                    else {
+                        return Ext.Object.merge(
+                            {
+                                text: item.text,
+                                dataIndex: item.name,
+                                editor: ExtClient.util.FieldTypeMap.getFormField(item)
+                            },
+                            ExtClient.util.FieldTypeMap.getGridColumn(item)
+                        );
+                    }
                 }),
 
                 dockedItems: [
@@ -51,11 +88,6 @@ Ext.define('ExtClient.view.GridBase', {
                             {
                                 text: 'Delete',
                                 action: 'delete'
-                            },
-                            '-',
-                            {
-                                text: 'Save',
-                                action: 'save'
                             }
                         ]
                     },
@@ -90,10 +122,6 @@ Ext.define('ExtClient.view.GridBase', {
                     if (selected) {
                         this.store.remove(selected);
                     }
-                },
-
-                save: function() {
-                    this.store.sync();
                 }
             });
         }

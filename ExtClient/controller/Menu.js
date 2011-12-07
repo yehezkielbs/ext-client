@@ -1,4 +1,4 @@
-/*global Ext, ExtClient*/
+/*global Ext, ExtClient, ExtClientApp*/
 
 Ext.define('ExtClient.controller.Menu', {
     extend: 'Ext.app.Controller',
@@ -19,7 +19,7 @@ Ext.define('ExtClient.controller.Menu', {
         var resourceStrings;
 
         if (record.get('leaf')) {
-            resourceStrings = new ExtClient.util.ResourceStrings(record.get('text'), record.get('model'), record.get('uri'));
+            resourceStrings = ExtClientApp.resourceStringsCollection.get(record.get('model'))
             ExtClient.controller.Base.factory(resourceStrings, function(controller) {
                 controller.displayGrid();
             });

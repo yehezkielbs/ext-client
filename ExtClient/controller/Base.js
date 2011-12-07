@@ -52,10 +52,6 @@ Ext.define('ExtClient.controller.Base', {
                             this.grid.remove();
                         },
 
-                        save: function() {
-                            this.grid.save();
-                        },
-
                         constructor: function() {
                             var controls = {};
 
@@ -64,23 +60,12 @@ Ext.define('ExtClient.controller.Base', {
                             controls[resourceStrings.gridName + ' button[action=add]'] = {click: this.insert};
                             controls[resourceStrings.gridName + ' button[action=edit]'] = {click: this.edit};
                             controls[resourceStrings.gridName + ' button[action=delete]'] = {click: this.remove};
-                            controls[resourceStrings.gridName + ' button[action=save]'] = {click: this.save};
                             this.control(controls);
                         }
                     });
 
                     Ext.Array.each(reflection.belongs_to || [], function(belongsToItem) {
-                        var menu = ExtClientApp.getStore('Menu').getRootNode(),
-                            menuNode, reflectionResourceString;
-
-                        menu.eachChild(function(nodeItem) {
-                            if (belongsToItem.model === nodeItem.get('model')) {
-                                menuNode = nodeItem;
-                            }
-                        });
-
-                        reflectionResourceString = new ExtClient.util.ResourceStrings(menuNode.get('text'), menuNode.get('model'), menuNode.get('uri'));
-                        ExtClient.controller.Base.factory(reflectionResourceString);
+                        ExtClient.controller.Base.factory(ExtClientApp.resourceStringsCollection.get(belongsToItem.model));
                     });
 
                     if (callback) {

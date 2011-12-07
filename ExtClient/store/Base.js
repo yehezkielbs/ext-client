@@ -11,7 +11,7 @@ Ext.define('ExtClient.store.Base', {
                 extend: 'Ext.data.Store',
 
                 autoLoad: false,
-                autoSync: false,
+                autoSync: true,
                 pageSize: 25,
 
                 proxy: {

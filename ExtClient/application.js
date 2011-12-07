@@ -29,6 +29,8 @@ Ext.onReady(function() {
             'Menu'
         ],
 
+        resourceStringsCollection: new Ext.util.MixedCollection(),
+
         getResourcesMetaUrl: function() {
             return(this.apiPrefix + '/_meta/resources.json');
         },
