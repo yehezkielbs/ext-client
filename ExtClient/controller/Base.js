@@ -29,10 +29,10 @@ Ext.define('ExtClient.controller.Base', {
                         stores: [resourceStrings.storeName],
                         views: [resourceStrings.gridName],
 
-                        grid: undefined,
+                        grid: null,
 
                         displayGrid: function() {
-                            if (this.grid === undefined) {
+                            if (!this.grid || this.grid.isDestroyed) {
                                 this.grid = this.getView(resourceStrings.gridName).create();
                                 Ext.getCmp('content-panel').add(this.grid);
                             }

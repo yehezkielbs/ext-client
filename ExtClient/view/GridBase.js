@@ -3,9 +3,7 @@
 Ext.define('ExtClient.view.GridBase', {
     statics: {
         factory: function(resourceStrings, reflection) {
-            var fields = reflection.fields,
-                rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
-                store = Ext.create(resourceStrings.storeClassName);
+            var fields = reflection.fields;
 
             if (Ext.ClassManager.isCreated(resourceStrings.gridClassName)) {
                 return;
@@ -18,88 +16,95 @@ Ext.define('ExtClient.view.GridBase', {
                 id: resourceStrings.gridId,
                 title: resourceStrings.text,
 
-                rowEditor: rowEditor,
+                rowEditor: null,
 
-                plugins: [rowEditor],
+                closable: true,
 
-                store: store,
+                initComponent: function() {
+                    var rowEditor = Ext.create('Ext.grid.plugin.RowEditing'),
+                        store = Ext.create(resourceStrings.storeClassName);
 
-                columns: Ext.Array.map(fields, function(item) {
-                    var belongsToRefArray = Ext.Array.filter(reflection.belongs_to || [], function(belongsToItem) {
-                            return (belongsToItem.foreign_key === item.name);
-                        }),
-                        belongsToRef, belongsToResourceStrings;
+                    this.rowEditor = rowEditor;
+                    this.plugins = [rowEditor];
+                    this.store = store;
+                    this.columns = Ext.Array.map(fields, function(item) {
+                        var belongsToRefArray = Ext.Array.filter(reflection.belongs_to || [], function(belongsToItem) {
+                                return (belongsToItem.foreign_key === item.name);
+                            }),
+                            belongsToRef, belongsToResourceStrings;
 
-                    if (belongsToRefArray.length > 0) {
-                        belongsToRef = belongsToRefArray[0];
-                        belongsToResourceStrings = ExtClientApp.resourceStringsCollection.get(belongsToRef.model);
+                        if (belongsToRefArray.length > 0) {
+                            belongsToRef = belongsToRefArray[0];
+                            belongsToResourceStrings = ExtClientApp.resourceStringsCollection.get(belongsToRef.model);
 
-                        rowEditor.addListener({
-                            beforeedit: function() {
-                                var comboBox = Ext.getCmp(belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId);
+                            rowEditor.addListener({
+                                beforeedit: function() {
+                                    var comboBox = Ext.getCmp(belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId);
 
-                                if (comboBox.store.storeId === "ext-empty-store") {
-                                    comboBox.store = Ext.create(belongsToResourceStrings.storeClassName);
+                                    if (comboBox.store.storeId === "ext-empty-store") {
+                                        comboBox.store = Ext.create(belongsToResourceStrings.storeClassName);
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        return {
-                            text: item.text,
-                            dataIndex: item.name,
-                            editor: {
-                                xtype: 'combobox',
-                                store: null,
-                                valueField: 'id',
-                                displayField: 'name',
-                                forceSelection: true,
-                                queryMode: 'remote',
-                                id: belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId
-                            },
-                            xtype: 'templatecolumn',
-                            tpl: '<tpl if="' + belongsToRef.name + '">{' + belongsToRef.name + '.name}</tpl>'
-                        };
-                    }
-                    else {
-                        return Ext.Object.merge(
-                            {
+                            return {
                                 text: item.text,
                                 dataIndex: item.name,
-                                editor: ExtClient.util.FieldTypeMap.getFormField(item)
-                            },
-                            ExtClient.util.FieldTypeMap.getGridColumn(item)
-                        );
-                    }
-                }),
+                                editor: {
+                                    xtype: 'combobox',
+                                    store: null,
+                                    valueField: 'id',
+                                    displayField: 'name',
+                                    forceSelection: true,
+                                    queryMode: 'remote',
+                                    id: belongsToResourceStrings.name + '-combobox-on-' + resourceStrings.gridId
+                                },
+                                xtype: 'templatecolumn',
+                                tpl: '<tpl if="' + belongsToRef.name + '">{' + belongsToRef.name + '.name}</tpl>'
+                            };
+                        }
+                        else {
+                            return Ext.Object.merge(
+                                {
+                                    text: item.text,
+                                    dataIndex: item.name,
+                                    editor: ExtClient.util.FieldTypeMap.getFormField(item)
+                                },
+                                ExtClient.util.FieldTypeMap.getGridColumn(item)
+                            );
+                        }
+                    });
+                    this.dockedItems = [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'top',
+                            items: [
+                                {
+                                    text: 'Add',
+                                    action: 'add'
+                                },
+                                {
+                                    text: 'Edit',
+                                    action: 'edit'
+                                },
+                                {
+                                    text: 'Delete',
+                                    action: 'delete'
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'pagingtoolbar',
+                            dock: 'bottom',
+                            store: store,
+                            displayInfo: true,
+                            displayMsg: 'Displaying {0} - {1} of {2}',
+                            emptyMsg: 'Nothing to display'
+                        }
+                    ];
 
-                dockedItems: [
-                    {
-                        xtype: 'toolbar',
-                        dock: 'top',
-                        items: [
-                            {
-                                text: 'Add',
-                                action: 'add'
-                            },
-                            {
-                                text: 'Edit',
-                                action: 'edit'
-                            },
-                            {
-                                text: 'Delete',
-                                action: 'delete'
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'pagingtoolbar',
-                        dock: 'bottom',
-                        store: store,
-                        displayInfo: true,
-                        displayMsg: 'Displaying {0} - {1} of {2}',
-                        emptyMsg: 'Nothing to display'
-                    }
-                ],
+                    this.callParent(arguments);
+                },
 
                 getSelected: function() {
                     return this.getSelectionModel().getSelection()[0]
