@@ -7,7 +7,7 @@ If you don't have Ruby & Rubygems installed, the easiest way to install using rv
 
 Assuming you have all the requirements ready, then you can prepare the project:
 
-* git clone git@bitbucket.org:yehezkielbs/ext-client.git
+* git clone git://github.com/yehezkielbs/ext-client.git # OR # git clone git@bitbucket.org:yehezkielbs/ext-client.git
 * cd ext-client/test
 * sudo gem install bundler
 * bundle install
