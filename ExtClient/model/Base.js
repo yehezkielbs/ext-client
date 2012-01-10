@@ -35,6 +35,22 @@ Ext.define('ExtClient.model.Base', {
                         getterName: 'get' + item.model,
                         setterName: 'set' + item.model
                     }
+                }),
+
+                // validation types:
+                // presence, length, email, inclusion, exclusion, format
+                validations: Ext.Array.map(reflection.validations || [], function(item) {
+                    var validation = { field: item.field, type: item.type };
+                    if (validation.type === 'format') {
+                        validation.matcher = item.matcher;
+                    }
+                    else if (validation.type === 'inclusion' || validation.type === 'exclusion') {
+                        validation.list = item.list;
+                    }
+                    else if (validation.type === 'length') {
+                        validation.min = item.min;
+                    }
+                    return validation;
                 })
             });
         }

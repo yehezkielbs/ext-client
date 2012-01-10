@@ -32,6 +32,12 @@ module Api
                 :precision => field.precision
             }
           end,
+          :validations => [
+              {
+                  :field => 'name',
+                  :type => 'presence'
+              }
+          ],
           :belongs_to => model_class.reflect_on_all_associations(:belongs_to).map do |association|
             {
                 :model => association.class_name,
