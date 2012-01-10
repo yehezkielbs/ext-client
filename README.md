@@ -13,6 +13,8 @@ Assuming you have all the requirements ready, then you can prepare the project:
 * bundle install
 * bundle exec rake jshint # to run JSHint check
 * cd test_app
+* bundle exec rake db:create # to create the db
+* bundle exec rake db:migrate # to create the tables
 * bundle exec rails s # to start the test web server
 
 You can then go to http://localhost:3000 to play with the app.
