@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 20111107220629) do
     t.text     "description"
     t.boolean  "active"
     t.date     "join_date"
-    t.decimal  "debt",              :precision => 2, :scale => 11
+    t.decimal  "debt",              :precision => 11, :scale => 2
     t.float    "rating"
     t.integer  "customer_group_id"
     t.datetime "created_at"
