@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -15,8 +16,8 @@ ActiveRecord::Schema.define(:version => 20111107220629) do
   create_table "customer_groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "customers", :force => true do |t|
@@ -27,8 +28,8 @@ ActiveRecord::Schema.define(:version => 20111107220629) do
     t.decimal  "debt",              :precision => 11, :scale => 2
     t.float    "rating"
     t.integer  "customer_group_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
   end
 
 end

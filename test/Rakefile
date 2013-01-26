@@ -1,5 +1,5 @@
-require 'rake'
-require 'jshint/tasks'
-
-JSHint.config_path = 'config/jshint.yml'
-
+require 'jshintrb/jshinttask'
+Jshintrb::JshintTask.new :jshint do |t|
+  t.pattern = '../ExtClient/**/*.js'
+  t.options = :defaults
+end
